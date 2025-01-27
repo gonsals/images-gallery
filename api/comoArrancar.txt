@@ -1,0 +1,7 @@
+Primero se tiene que levantar el entorno virtual con el comando:
+
+-pipenv shell
+
+Luego se instala el paquete de Flask con el comando:
+
+-python main.py

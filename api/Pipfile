@@ -7,8 +7,12 @@ name = "pypi"
 flask = "3.1.0"
 requests = "*"
 python-dotenv = "*"
+flask-cors = "*"
 
 [dev-packages]
+black = "*"
+pylint = "*"
+pycodestyle = "*"
 
 [requires]
 python_version = "3.13"

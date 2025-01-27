@@ -5,7 +5,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import { Welcome } from "./components/Welcome";
 
-const UNSPLASH_API_KEY = process.env.REACT_APP_ACCESS_KEY_UNSPLASH;
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5050";
 
 const App = () => {
     const [search, setSearch] = useState("");
@@ -19,9 +19,7 @@ const App = () => {
         e.preventDefault();
         console.log(search);
 
-        fetch(
-            `https://api.unsplash.com/photos/random/?query=${search}&client_id=${UNSPLASH_API_KEY}`
-        )
+        fetch(`${API_URL}/new-image?query=${search}`)
             .then((res) => res.json())
             .then((data) => setImages([{ ...data, title: search }, ...images]))
             .catch((err) => console.error(err));
