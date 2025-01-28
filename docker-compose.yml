@@ -16,3 +16,27 @@ services:
             - 5050:5050
         volumes:
             - ./api:/app
+    mongo:
+        image: mongo
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: very-strong-db-password
+        volumes:
+            - mongodb_data:/data/db # Volumen de datos para el contenedor con ./ busca en el directorio actual
+    mongo-express:
+        image: mongo-express
+        restart: always # Para que se reinicie si el contenedor se reinicia o si existe un error
+        ports:
+            - 8081:8081 #Puerto de acceso al servicio
+        environment:
+            ME_CONFIG_MONGODB_SERVER: mongo
+            ME_CONFIG_MONGODB_ADMINUSERNAME: root
+            ME_CONFIG_MONGODB_ADMINPASSWORD: very-strong-db-password
+            # ME_CONFIG_MONGODB_URL: mongodb://root:very-strong-db-password@mongo:27017/
+            ME_CONFIG_BASICAUTH: false
+        depends_on:
+            - mongo
+
+volumes:
+    mongodb_data:
