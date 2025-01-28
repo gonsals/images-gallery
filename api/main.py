@@ -16,7 +16,7 @@ if not UNSPLASH_API_KEY:
 app = Flask(__name__)
 CORS(app)
 
-# DEBUG mode to see the changes
+# DEBUG mode to see the changes on change
 app.config["DEBUG"] = DEBUG
 
 @app.route("/")
