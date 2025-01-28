@@ -2,8 +2,11 @@ import requests
 from flask import Flask, request
 from dotenv import dotenv_values
 from flask_cors import CORS
+from mongo_client import insert_test_data
 
 config = dotenv_values(".env.local")
+
+# insert_test_data() # Insert test data pero solo una vez
 
 
 DEBUG =bool(config.get("DEBUG", True))
@@ -22,6 +25,7 @@ app.config["DEBUG"] = DEBUG
 @app.route("/")
 def hello():
     return "Hello, World!"
+
 
 @app.route("/new-image")
 def new_image():
