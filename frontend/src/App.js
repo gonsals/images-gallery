@@ -6,6 +6,8 @@ import { Container, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { Welcome } from "./components/Welcome";
 import { Spinner } from "./components/Spinner";
+import { toast, ToastContainer, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5050";
 
@@ -14,29 +16,51 @@ const App = () => {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const showToast = (message, type = "success") => {
+        toast[type](message, {
+            position: "bottom-right",
+            hideProgressBar: false,
+            closeOnClick: false,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+        });
+    };
+
     useEffect(() => {
         const fetchImages = async () => {
             setLoading(true);
             try {
                 const res = await axios.get(`${API_URL}/images`);
-                setImages((res.data || []).reverse());
+                setImages(res.data || []);
             } catch (error) {
                 console.error(error);
+                showToast(error.message, "error");
             } finally {
                 setLoading(false);
+                showToast("Saved image downloaded", "success");
             }
         };
         fetchImages();
     }, []);
 
     const handleDeleteImage = async (id) => {
+        const image = images.find((image) => image.id === id);
         try {
             const res = await axios.delete(`${API_URL}/images/${id}`);
-            console.log(res.data);
+            // Verificar que la eliminación fue exitosa antes de actualizar el estado
+            if (res.status === 200) {
+                setImages((prevImages) =>
+                    prevImages.filter((image) => image.id !== id)
+                );
+                showToast(`Image ${image.title} was deleted`, "warning");
+            } else {
+                showToast("Failed to delete image from database", "error");
+            }
         } catch (error) {
             console.error(error);
-        } finally {
-            setImages(images.filter((image) => image.id !== id));
+            showToast(error.message, "error");
         }
     };
 
@@ -44,21 +68,19 @@ const App = () => {
         image.saved = true;
         try {
             const res = await axios.post(`${API_URL}/images`, image);
-            console.log(res.data);
             if (res.data?.inserted_id) {
-                setImages(
-                    images.map((imageInside) =>
+                setImages((prevImages) =>
+                    prevImages.map((imageInside) =>
                         imageInside.id === image.id
-                            ? {
-                                  ...imageInside,
-                                  saved: true,
-                              }
+                            ? { ...imageInside, saved: true }
                             : imageInside
                     )
                 );
+                showToast(`Image ${image.title} was saved`, "info");
             }
         } catch (error) {
             console.error(error);
+            showToast(error.message, "error");
         }
     };
 
@@ -66,10 +88,14 @@ const App = () => {
         e.preventDefault();
         try {
             const res = await axios.get(`${API_URL}/new-image?query=${search}`);
-            setImages([{ ...res.data, title: search }, ...images]);
-            console.log(res.data);
+            setImages((prevImages) => [
+                { ...res.data, title: search },
+                ...prevImages,
+            ]);
+            showToast(`New image ${search.toUpperCase()} was found`, "info");
         } catch (error) {
             console.error(error);
+            showToast(error.message, "error");
         } finally {
             setSearch("");
         }
@@ -78,9 +104,7 @@ const App = () => {
     return (
         <div className="App">
             <Header title="Image Gallery!!" />
-
             {loading && <Spinner />}
-
             {!loading && (
                 <>
                     <Search
@@ -97,28 +121,25 @@ const App = () => {
                             xs={1}
                             md={2}
                             lg={3}
-                            className=" justify-content-center"
+                            className="justify-content-center"
                         >
-                            {images &&
-                                images.reverse().map((image) => (
-                                    <Col
-                                        className=" pb-3 justify-content-center d-flex"
-                                        key={image.id}
-                                    >
-                                        <ImageCard
-                                            key={image.id}
-                                            image={image}
-                                            handleDeleteImage={
-                                                handleDeleteImage
-                                            }
-                                            handleSaveImage={handleSaveImage}
-                                        />
-                                    </Col>
-                                ))}
+                            {images.map((image) => (
+                                <Col
+                                    className="pb-3 justify-content-center d-flex"
+                                    key={image.id}
+                                >
+                                    <ImageCard
+                                        image={image}
+                                        handleDeleteImage={handleDeleteImage}
+                                        handleSaveImage={handleSaveImage}
+                                    />
+                                </Col>
+                            ))}
                         </Row>
                     </Container>
                 </>
             )}
+            <ToastContainer />
         </div>
     );
 };
