@@ -29,6 +29,7 @@ const App = () => {
     };
 
     const handleSaveImage = async (image) => {
+        image.saved = true;
         try {
             const res = await axios.post(`${API_URL}/images`, image);
             console.log(res.data);
