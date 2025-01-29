@@ -39,5 +39,4 @@ docker run -p 5050:5050 api
 
 ---
 
-**Autor:** Marc Gonzalez  
-**Licencia:** MIT
+**Autor:** [@gonsals](https://www.github.com/gonsals)

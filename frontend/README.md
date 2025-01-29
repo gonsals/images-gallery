@@ -37,5 +37,4 @@ docker run -p 3000:3000 frontend
 
 ---
 
-**Autor:** Marc Gonzalez  
-**Licencia:** MIT
+**Autor:** [@gonsals](https://www.github.com/gonsals)
