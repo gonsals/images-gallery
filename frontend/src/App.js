@@ -16,7 +16,7 @@ const App = () => {
         const fetchImages = async () => {
             try {
                 const res = await axios.get(`${API_URL}/images`);
-                setImages(res.data || []);
+                setImages((res.data || []).reverse());
             } catch (error) {
                 console.error(error);
             }
@@ -26,6 +26,27 @@ const App = () => {
 
     const removeImage = (id) => {
         setImages(images.filter((image) => image.id !== id));
+    };
+
+    const handleSaveImage = async (image) => {
+        try {
+            const res = await axios.post(`${API_URL}/images`, image);
+            console.log(res.data);
+            if (res.data?.inserted_id) {
+                setImages(
+                    images.map((imageInside) =>
+                        imageInside.id === image.id
+                            ? {
+                                  ...imageInside,
+                                  saved: true,
+                              }
+                            : imageInside
+                    )
+                );
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -53,12 +74,16 @@ const App = () => {
                 {images.length === 0 && <Welcome />}
                 <Row xs={1} md={2} lg={3} className=" justify-content-center">
                     {images &&
-                        images.map((image) => (
-                            <Col className=" pb-3" key={image.id}>
+                        images.reverse().map((image) => (
+                            <Col
+                                className=" pb-3 justify-content-center d-flex"
+                                key={image.id}
+                            >
                                 <ImageCard
                                     key={image.id}
                                     image={image}
                                     removeImage={removeImage}
+                                    handleSaveImage={handleSaveImage}
                                 />
                             </Col>
                         ))}

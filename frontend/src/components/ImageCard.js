@@ -1,8 +1,8 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
+import { Card, Container } from "react-bootstrap";
 
-export const ImageCard = ({ image, removeImage }) => {
+export const ImageCard = ({ image, removeImage, handleSaveImage }) => {
     return (
         <Card style={{ width: "18rem" }}>
             <Card.Img variant="top" src={image.urls.small} />
@@ -11,9 +11,22 @@ export const ImageCard = ({ image, removeImage }) => {
                 <Card.Text>
                     {image.description || image.alt_description}
                 </Card.Text>
-                <Button onClick={() => removeImage(image.id)} variant="primary">
-                    Delete
-                </Button>
+                <Container className="d-flex justify-content-between">
+                    {!image.saved && (
+                        <Button
+                            variant="primary"
+                            onClick={() => handleSaveImage(image)}
+                        >
+                            Save
+                        </Button>
+                    )}
+                    <Button
+                        variant="secondary"
+                        onClick={() => removeImage(image.id)}
+                    >
+                        Delete
+                    </Button>
+                </Container>
             </Card.Body>
         </Card>
     );
