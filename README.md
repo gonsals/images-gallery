@@ -62,5 +62,4 @@ La aplicación estará disponible en:
 
 ---
 
-**Autor:** Marc Gonzalez  
-**Licencia:** MIT
+**Autor:** [@gonsals](https://www.github.com/gonsals)
