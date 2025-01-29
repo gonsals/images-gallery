@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, Response, request, jsonify
 from dotenv import dotenv_values
 from flask_cors import CORS
 from mongo_client import mongo_client
@@ -41,7 +41,7 @@ def new_image():
 
     return response.json()
 
-@app.route("/images", methods=["GET", "POST"])
+@app.route("/images", methods=["GET", "POST", "DELETE"])
 def images():
     if request.method == "GET":
         # read images from database
@@ -55,6 +55,16 @@ def images():
         inserted_id = result.inserted_id
         return {"inserted_id": inserted_id}
 
+@app.route("/images/<image_id>", methods=["DELETE"])
+def delete_image(image_id):
+    if request.method == "DELETE":
+        # delete image from database
+        result = images_collection.delete_one({"_id": image_id})
+        if not result:
+            return Response(status=500, response=f"Image {image_id} not deleted")
+        if result.deleted_count == 0 : 
+            return Response(status=404, response=f"No image with id {image_id} found")
+        return Response(status=200, response=f"Deleted id {image_id}")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5050)
