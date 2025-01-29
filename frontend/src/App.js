@@ -3,7 +3,7 @@ import { Header } from "./components/Header";
 import { Search } from "./components/Search";
 import { ImageCard } from "./components/ImageCard";
 import { Container, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Welcome } from "./components/Welcome";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5050";
@@ -11,6 +11,18 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5050";
 const App = () => {
     const [search, setSearch] = useState("");
     const [images, setImages] = useState([]);
+
+    useEffect(() => {
+        const fetchImages = async () => {
+            try {
+                const res = await axios.get(`${API_URL}/images`);
+                setImages(res.data || []);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchImages();
+    }, []);
 
     const removeImage = (id) => {
         setImages(images.filter((image) => image.id !== id));
