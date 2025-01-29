@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Header } from "./components/Header";
 import { Search } from "./components/Search";
 import { ImageCard } from "./components/ImageCard";
@@ -15,16 +16,17 @@ const App = () => {
         setImages(images.filter((image) => image.id !== id));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(search);
-
-        fetch(`${API_URL}/new-image?query=${search}`)
-            .then((res) => res.json())
-            .then((data) => setImages([{ ...data, title: search }, ...images]))
-            .catch((err) => console.error(err));
-
-        setSearch("");
+        try {
+            const res = await axios.get(`${API_URL}/new-image?query=${search}`);
+            setImages([{ ...res.data, title: search }, ...images]);
+            console.log(res.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setSearch("");
+        }
     };
 
     return (
