@@ -10,11 +10,12 @@ export const Header = ({ title }) => {
     return (
         <Navbar style={navbarStyle} variant="light">
             <Container>
-                <Logo
-                    alt={title}
-                    style={{ maxWidth: "12rem", maxHeight: "3rem" }}
-                />
-                {/* <Navbar.Brand href="/">{title}</Navbar.Brand> */}
+                <Navbar.Brand href="/">
+                    <Logo
+                        alt={title}
+                        style={{ maxWidth: "12rem", maxHeight: "3rem" }}
+                    />
+                </Navbar.Brand>
             </Container>
         </Navbar>
     );
